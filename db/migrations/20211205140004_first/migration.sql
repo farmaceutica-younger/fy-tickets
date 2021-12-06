@@ -37,6 +37,19 @@ CREATE TABLE "Token" (
     CONSTRAINT "Token_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+-- CreateTable
+CREATE TABLE "Ticket" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    "email" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "role" TEXT NOT NULL,
+    "avatar" TEXT NOT NULL,
+    "ticketNum" TEXT NOT NULL,
+    "ticketImage" TEXT
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -45,3 +58,6 @@ CREATE UNIQUE INDEX "Session_handle_key" ON "Session"("handle");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Token_hashedToken_type_key" ON "Token"("hashedToken", "type");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Ticket_email_key" ON "Ticket"("email");

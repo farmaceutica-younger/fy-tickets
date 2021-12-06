@@ -77,7 +77,7 @@ const Avatar = ({ src, name, role }: AvatarProps) => {
       <img
         width="100"
         height="100"
-        src={`https://res.cloudinary.com/dbdvy5b2z/image/upload/w_100,h_100,r_max/ticket/${src}.png`}
+        src={`https://res.cloudinary.com/${process.env.BLITZ_PUBLIC_CLOUDINARY_NAME}/image/upload/w_100,h_100,r_max/ticket/${src}.png`}
         alt="avatar"
       />
       <div className="text">
@@ -150,9 +150,7 @@ const Social = () => {
       </p>
       <p className="event">Vapore 1928 - via Messina 26 Milano</p>
       <p className="str">Questo è il tuo pass esclusivo per l&apos;evento</p>
-      {/* <a href="https://farmaceuticayounger.science">
-        https://farmaceuticayounger.science
-      </a> */}
+
       <div className="icons">
         <svg
           width="30"

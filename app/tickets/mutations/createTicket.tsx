@@ -1,22 +1,32 @@
 import { resolver } from "blitz"
-import db from "db"
-import { z } from "zod"
-import { renderToString } from "react-dom/server"
-import { Ticket } from "../components/ticket"
+import db, { Ticket } from "db"
 import nodeHtmlToImage from "node-html-to-image"
+import { renderToString } from "react-dom/server"
+import { z } from "zod"
+import { Ticket as TicketCmp } from "../components/ticket"
 import { v2 as cloudinary } from "cloudinary"
 
-const RenderTicket = z.object({
-  id: z.number(),
+const CreateTicket = z.object({
+  name: z.string(),
+  role: z.string(),
+  image: z.string(),
+  ticketNum: z.string(),
 })
 
-export default resolver.pipe(resolver.zod(RenderTicket), resolver.authorize(), async ({ id }) => {
-  const ticket = await db.ticket.findUnique({ where: { id } })
-  if (!ticket) {
-    return ""
-  }
+export default resolver.pipe(resolver.zod(CreateTicket), resolver.authorize(), async (input) => {
+  const ticketImage = await renderTicketImage(input)
+  const ticket = await db.ticket.create({ data: { ...input, ticketImage } })
+  return ticket
+})
+
+const renderTicketImage = async (ticket: {
+  name: string
+  role: string
+  image: string
+  ticketNum: string
+}) => {
   const renderedString = renderToString(
-    <Ticket
+    <TicketCmp
       ticketNum={ticket.ticketNum}
       user={{
         name: ticket.name,
@@ -46,4 +56,4 @@ export default resolver.pipe(resolver.zod(RenderTicket), resolver.authorize(), a
   const dataUri = `data:image/png;base64,${image}`
   const res = await cloudinary.uploader.upload(dataUri, { folder: "test/tickets" })
   return res.url
-})
+}

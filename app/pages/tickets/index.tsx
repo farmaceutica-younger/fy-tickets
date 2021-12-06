@@ -47,12 +47,6 @@ const TicketsPage: BlitzPage = () => {
       </Head>
 
       <div>
-        <p>
-          <Link href={Routes.NewTicketPage()}>
-            <a>Create Ticket</a>
-          </Link>
-        </p>
-
         <Suspense fallback={<div>Loading...</div>}>
           <TicketsList />
         </Suspense>
@@ -61,7 +55,7 @@ const TicketsPage: BlitzPage = () => {
   )
 }
 
-TicketsPage.authenticate = true
+TicketsPage.authenticate = false
 TicketsPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default TicketsPage
