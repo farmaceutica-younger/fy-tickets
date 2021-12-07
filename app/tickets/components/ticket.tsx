@@ -1,22 +1,27 @@
 import styled from "@emotion/styled"
+import { Event as EventModel, Ticket as TicketModel } from "db"
 
 interface TicketProps {
-  user: AvatarProps
-  ticketNum: number
+  ticket: TicketModel
+  event: EventModel
 }
 
-export const Ticket = ({ user, ticketNum }: TicketProps) => {
+export const Ticket = ({ ticket, event }: TicketProps) => {
   return (
     <TicketStyled>
-      <TicketBackground />
-      <TicketContent>
-        <div className="ml-24 grid grid-rows-3  content-center">
-          <Avatar {...user} />
-          <Logo />
-          <Social />
+      <div className="hidden sm:block">
+        <TicketBackground rotate={false} />
+      </div>
+      <div className="sm:hidden">
+        <TicketBackground rotate />
+      </div>
+      <TicketContent className="grid grid-rows-5 sm:grid-rows-1 sm:grid-cols-5">
+        <div className="grid grid-rows-3 row-start-1 row-end-5 sm:row-span-1 sm:col-start-1 sm:col-end-5 place-content-center sm:place-content-start sm:pl-10">
+          <Avatar {...ticket} />
+          <Logo {...event} />
+          <Social {...event} />
         </div>
-        <Line />
-        <TicketNumber n={ticketNum} />
+        <TicketNumber n={ticket.ticketNum} />
       </TicketContent>
     </TicketStyled>
   )
@@ -26,7 +31,6 @@ const TicketContent = styled.div`
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-columns: 4fr 10px 1fr;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -34,45 +38,56 @@ const TicketContent = styled.div`
   right: 0;
 `
 
-const TicketBackground = () => {
-  return (
-    <svg
-      width="1000"
-      height="500"
-      viewBox="0 0 1000 500"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <mask id="path-1-inside-1_1_47" fill="white">
+const TicketBackground = ({ rotate }: { rotate: boolean }) => {
+  if (rotate) {
+    return (
+      <svg width="250" height="500" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <mask id="a" fill="#fff">
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M250 30c0-16.569-13.431-30-30-30h-74.001l.001.25c0 11.736-9.514 21.25-21.25 21.25S103.5 11.986 103.5.25l.001-.25H30C13.431 0 0 13.431 0 30v440c0 16.569 13.431 30 30 30h73.501l-.001-.25c0-11.736 9.514-21.25 21.25-21.25S146 488.014 146 499.75l-.001.25H220c16.569 0 30-13.431 30-30V30Z"
+          />
+        </mask>
         <path
           fillRule="evenodd"
           clipRule="evenodd"
-          d="M30 0C13.4315 0 0 13.4315 0 30V208.003C0.166438 208.001 0.333107 208 0.5 208C23.9721 208 43 227.028 43 250.5C43 273.972 23.9721 293 0.5 293C0.333107 293 0.166438 292.999 0 292.997V470C0 486.569 13.4314 500 30 500H970C986.569 500 1000 486.569 1000 470V292.997C999.834 292.999 999.667 293 999.5 293C976.028 293 957 273.972 957 250.5C957 227.028 976.028 208 999.5 208C999.667 208 999.834 208.001 1000 208.003V30C1000 13.4315 986.569 0 970 0H30Z"
+          d="M250 30c0-16.569-13.431-30-30-30h-74.001l.001.25c0 11.736-9.514 21.25-21.25 21.25S103.5 11.986 103.5.25l.001-.25H30C13.431 0 0 13.431 0 30v440c0 16.569 13.431 30 30 30h73.501l-.001-.25c0-11.736 9.514-21.25 21.25-21.25S146 488.014 146 499.75l-.001.25H220c16.569 0 30-13.431 30-30V30Z"
+          fill="#fff"
+        />
+        <path
+          d="M145.999 0v-3h-3.035l.035 3.035 3-.035Zm-42.498 0 3 .035.035-3.035h-3.035v3Zm0 500v3h3.035l-.035-3.035-3 .035Zm42.498 0-3-.035-.035 3.035h3.035v-3ZM220 3c14.912 0 27 12.088 27 27h6c0-18.225-14.775-33-33-33v6Zm-74.001 0H220v-6h-74.001v6ZM149 .25l-.002-.285-5.999.07.001.215h6ZM124.75 24.5C138.143 24.5 149 13.643 149 .25h-6c0 10.08-8.171 18.25-18.25 18.25v6ZM100.5.25c0 13.393 10.857 24.25 24.25 24.25v-6c-10.079 0-18.25-8.17-18.25-18.25h-6Zm.002-.285L100.5.25h6l.001-.215-5.999-.07ZM30 3h73.501v-6H30v6ZM3 30C3 15.088 15.088 3 30 3v-6C11.775-3-3 11.775-3 30h6Zm0 440V30h-6v440h6Zm27 27c-14.912 0-27-12.088-27-27h-6c0 18.225 14.775 33 33 33v-6Zm73.501 0H30v6h73.501v-6Zm-3.001 2.75.002.285 5.999-.07-.001-.215h-6Zm24.25-24.25c-13.393 0-24.25 10.857-24.25 24.25h6c0-10.079 8.171-18.25 18.25-18.25v-6ZM149 499.75c0-13.393-10.857-24.25-24.25-24.25v6c10.079 0 18.25 8.171 18.25 18.25h6Zm-.002.285.002-.285h-6l-.001.215 5.999.07ZM220 497h-74.001v6H220v-6Zm27-27c0 14.912-12.088 27-27 27v6c18.225 0 33-14.775 33-33h-6Zm0-440v440h6V30h-6Z"
+          fill="#D61F69"
+          mask="url(#a)"
+        />
+        <path stroke="#D61F69" strokeWidth="2" strokeDasharray="12 12" d="M250 384H0" />
+      </svg>
+    )
+  }
+  return (
+    <svg width="500" height="250" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <mask id="a" fill="#fff">
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M30 0C13.431 0 0 13.431 0 30v74.001L.25 104c11.736 0 21.25 9.514 21.25 21.25S11.986 146.5.25 146.5l-.25-.001V220c0 16.569 13.431 30 30 30h440c16.569 0 30-13.431 30-30v-73.501l-.25.001c-11.736 0-21.25-9.514-21.25-21.25S488.014 104 499.75 104l.25.001V30c0-16.569-13.431-30-30-30H30Z"
         />
       </mask>
       <path
         fillRule="evenodd"
         clipRule="evenodd"
-        d="M30 0C13.4315 0 0 13.4315 0 30V208.003C0.166438 208.001 0.333107 208 0.5 208C23.9721 208 43 227.028 43 250.5C43 273.972 23.9721 293 0.5 293C0.333107 293 0.166438 292.999 0 292.997V470C0 486.569 13.4314 500 30 500H970C986.569 500 1000 486.569 1000 470V292.997C999.834 292.999 999.667 293 999.5 293C976.028 293 957 273.972 957 250.5C957 227.028 976.028 208 999.5 208C999.667 208 999.834 208.001 1000 208.003V30C1000 13.4315 986.569 0 970 0H30Z"
-        fill="white"
+        d="M30 0C13.431 0 0 13.431 0 30v74.001L.25 104c11.736 0 21.25 9.514 21.25 21.25S11.986 146.5.25 146.5l-.25-.001V220c0 16.569 13.431 30 30 30h440c16.569 0 30-13.431 30-30v-73.501l-.25.001c-11.736 0-21.25-9.514-21.25-21.25S488.014 104 499.75 104l.25.001V30c0-16.569-13.431-30-30-30H30Z"
+        fill="#fff"
       />
       <path
-        d="M0 208.003H-6V214.073L0.0693041 214.002L0 208.003ZM0 292.997L0.0693041 286.998L-6 286.927L-6 292.997H0ZM1000 292.997H1006V286.927L999.931 286.998L1000 292.997ZM1000 208.003L999.931 214.002L1006 214.073V208.003H1000ZM6 30C6 16.7452 16.7452 6 30 6V-6C10.1177 -6 -6 10.1178 -6 30H6ZM6 208.003V30H-6V208.003H6ZM0.5 202C0.310067 202 0.120297 202.001 -0.0693041 202.003L0.0693041 214.002C0.21258 214.001 0.356147 214 0.5 214V202ZM49 250.5C49 223.714 27.2858 202 0.5 202V214C20.6584 214 37 230.342 37 250.5H49ZM0.5 299C27.2858 299 49 277.286 49 250.5H37C37 270.658 20.6584 287 0.5 287V299ZM-0.0693041 298.997C0.120661 298.999 0.310435 299 0.5 299V287C0.355779 287 0.212216 286.999 0.0693041 286.998L-0.0693041 298.997ZM6 470V292.997H-6V470H6ZM30 494C16.7451 494 6 483.255 6 470H-6C-6 489.882 10.1177 506 30 506V494ZM970 494H30V506H970V494ZM994 470C994 483.255 983.255 494 970 494V506C989.882 506 1006 489.882 1006 470H994ZM994 292.997V470H1006V292.997H994ZM999.5 299C999.69 299 999.879 298.999 1000.07 298.997L999.931 286.998C999.788 286.999 999.644 287 999.5 287V299ZM951 250.5C951 277.286 972.714 299 999.5 299V287C979.342 287 963 270.658 963 250.5H951ZM999.5 202C972.714 202 951 223.714 951 250.5H963C963 230.342 979.342 214 999.5 214V202ZM1000.07 202.003C999.88 202.001 999.69 202 999.5 202V214C999.644 214 999.787 214.001 999.931 214.002L1000.07 202.003ZM994 30V208.003H1006V30H994ZM970 6C983.255 6 994 16.7452 994 30H1006C1006 10.1178 989.882 -6 970 -6V6ZM30 6H970V-6H30V6Z"
-        mask="url(#path-1-inside-1_1_47)"
-        fill="#d61f69"
+        d="M0 104.001h-3v3.035l3.035-.035-.035-3Zm0 42.498.035-3-3.035-.035v3.035h3Zm500 0h3v-3.035l-3.035.035.035 3Zm0-42.498-.035 3 3.035.035v-3.035h-3ZM3 30C3 15.088 15.088 3 30 3v-6C11.775-3-3 11.775-3 30h6Zm0 74.001V30h-6v74.001h6ZM.25 101l-.285.002.07 5.999L.25 107v-6Zm24.25 24.25C24.5 111.857 13.643 101 .25 101v6c10.08 0 18.25 8.171 18.25 18.25h6ZM.25 149.5c13.393 0 24.25-10.857 24.25-24.25h-6c0 10.079-8.17 18.25-18.25 18.25v6Zm-.285-.002.285.002v-6l-.215-.001-.07 5.999ZM3 220v-73.501h-6V220h6Zm27 27c-14.912 0-27-12.088-27-27h-6c0 18.225 14.775 33 33 33v-6Zm440 0H30v6h440v-6Zm27-27c0 14.912-12.088 27-27 27v6c18.225 0 33-14.775 33-33h-6Zm0-73.501V220h6v-73.501h-6Zm2.75 3.001.285-.002-.07-5.999-.215.001v6Zm-24.25-24.25c0 13.393 10.857 24.25 24.25 24.25v-6c-10.079 0-18.25-8.171-18.25-18.25h-6ZM499.75 101c-13.393 0-24.25 10.857-24.25 24.25h6c0-10.079 8.171-18.25 18.25-18.25v-6Zm.285.002-.285-.002v6l.215.001.07-5.999ZM497 30v74.001h6V30h-6ZM470 3c14.912 0 27 12.088 27 27h6c0-18.225-14.775-33-33-33v6ZM30 3h440v-6H30v6Z"
+        fill="#D61F69"
+        mask="url(#a)"
       />
+      <path stroke="#D61F69" strokeWidth="2" strokeDasharray="12 12" d="M384 0v250" />
     </svg>
   )
 }
-
-const Line = styled.div`
-  width: 10px;
-  height: 100%;
-  background-image: linear-gradient(#d61f69 50%, rgba(255, 255, 255, 0) 0%);
-  background-position: right;
-  background-size: 5px 40px;
-  background-repeat: repeat-y;
-`
 
 const TicketStyled = styled.div`
   width: fit-content;
@@ -86,60 +101,44 @@ const TicketStyled = styled.div`
   }
 `
 
-interface AvatarProps {
-  src: string
-  name: string
-  role: string
-}
-
-const Avatar = ({ src, name, role }: AvatarProps) => {
-  const size = 60
+const Avatar = ({ avatar, name, role }: TicketModel) => {
+  const size = 40
   return (
     <div className="flex items-center">
-      <img width={size} height={size} src={src} alt="avatar" className="rounded-full" />
-      <div className="text-gray-900 ml-4">
-        <p className="text-xl font-semibold"> {name} </p>
-        <p className="text-xl font-thin"> {role}</p>
+      <img width={size} height={size} src={avatar} alt="avatar" className="rounded-full" />
+      <div className="text-gray-900 ml-2">
+        <p className="font-semibold"> {name} </p>
+        <p className="font-thin"> {role}</p>
       </div>
     </div>
   )
-}
-
-interface TicketNumberProps {
-  n: number
 }
 
 function pad(value: number) {
   return `0000000000${value}`.slice(-6)
 }
 
-const TicketNumber = ({ n }: TicketNumberProps) => {
+const TicketNumber = ({ n }: { n: number }) => {
   return (
     <div className="grid place-content-center overflow-visible">
-      <div
-        style={{ transform: "rotate(90deg)" }}
-        className="mr-10 text-pink-600 text-5xl font-semibold tracking-wide grid place-content-center w-10 whitespace-nowrap	"
-      >
+      <div className="text-pink-600 text-2xl font-semibold tracking-wide grid place-content-center w-10 whitespace-nowrap mb-8 sm:rotate-90 sm:mb-0 sm:mr-6">
         <p>№ {pad(n)}</p>
       </div>
     </div>
   )
 }
 
-const Social = () => {
+const Social = (event: EventModel) => {
   return (
-    <div className="text-pink-500">
-      <p className="event">
-        <strong>15 Dicembre ore 20:00</strong>{" "}
-      </p>
-      <p className="event">Vapore 1928 - via Messina 26 Milano</p>
-      <p className="str">Questo è il tuo pass esclusivo per l&apos;evento</p>
+    <div className="text-pink-500 mt-2 text-center sm:text-left">
+      <p className="text-sm">{event.eventDate.toISOString()}</p>
+      <p className="text-xs">{event.eventLocation}</p>
 
-      <div className="flex items-center mt-3 w-44 justify-between text-pink-700">
+      <div className="flex items-center mt-6 sm:mt-2 justify-evenly sm:justify-between sm:w-36 text-pink-700">
         <a href="https://www.instagram.com/farmaceutica_younger/" target="_blank" rel="noreferrer">
           <svg
-            width="30"
-            height="30"
+            width="15"
+            height="15"
             viewBox="0 0 30 30"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -157,8 +156,8 @@ const Social = () => {
           rel="noreferrer"
         >
           <svg
-            width="30"
-            height="22"
+            width="15"
+            height="11"
             viewBox="0 0 30 22"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -172,8 +171,8 @@ const Social = () => {
         </a>
         <a href="https://www.facebook.com/FarmaceuticaYounger/" target="_blank" rel="noreferrer">
           <svg
-            width="30"
-            height="30"
+            width="15"
+            height="15"
             viewBox="0 0 30 30"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -191,8 +190,8 @@ const Social = () => {
           rel="noreferrer"
         >
           <svg
-            width="30"
-            height="30"
+            width="15"
+            height="15"
             viewBox="0 0 30 30"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -209,10 +208,16 @@ const Social = () => {
   )
 }
 
-const Logo = () => {
+const Logo = (event: EventModel) => {
   return (
-    <div className="flex items-center text-pink-500">
-      <svg width="100" height="152" viewBox="0 0 140 152" xmlns="http://www.w3.org/2000/svg">
+    <div className="flex flex-col sm:flex-row items-center justify-items-center text-pink-500">
+      <svg
+        className="h-20"
+        width="100"
+        height="152"
+        viewBox="0 0 140 152"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <path
           d="M68.0564 5.4195L68.0773 5.41148C68.6703 5.14924 69.312 5.01531 69.9604 5.01849C70.6935 5.01849 71.4442 5.1821 72.1548 5.50933C73.5006 6.1269 74.4935 7.22889 74.8865 8.55384C75.3388 9.85153 75.1768 11.3385 74.4422 12.633C73.7203 13.905 72.5558 14.7872 71.2132 15.0647C69.9652 15.408 68.5585 15.1834 67.3602 14.452C66.1652 13.7221 65.3263 12.5784 65.0552 11.292C64.436 8.94523 65.7818 6.31136 68.0548 5.42111L68.0564 5.4195ZM106.17 61.9851C104.358 48.2126 100.916 36.7901 95.643 27.0615C91.3794 19.2658 86.1919 13.6034 80.22 10.2189C80.0355 8.60677 79.8446 6.94015 79.0266 5.47083C77.1739 1.7847 72.8686 -0.478626 68.8023 0.086003C65.1081 0.482206 61.7797 3.10645 60.5157 6.61934C59.141 10.2509 60.1275 14.6541 62.9074 17.3152C65.7209 20.1624 70.2604 21.0366 73.9289 19.4486C75.735 18.7589 77.3375 17.3826 78.8181 15.2508C87.5281 20.8425 92.2232 30.6658 95.003 37.6082C99.727 49.8151 102.157 63.8554 102.223 79.341C102.223 90.7427 100.863 101.594 98.1807 111.595C98.0523 112.099 97.8983 112.595 97.7444 113.092C97.446 114.056 97.138 115.054 97.0129 116.113C96.9471 116.923 97.369 117.733 98.1149 118.225C98.556 118.517 99.0533 118.663 99.5297 118.663C99.8745 118.663 100.208 118.586 100.5 118.43C101.536 118.009 101.859 116.966 102.115 116.13C102.165 115.97 102.213 115.809 102.273 115.638C107.168 98.9234 108.48 80.8729 106.17 61.9851V61.9851ZM51.5907 34.5059C51.4736 33.3125 50.6459 32.4303 49.5744 32.3164C43.657 31.1743 37.7926 30.7589 32.1431 31.0813H32.1415C24.9874 31.5224 15.2235 33.5884 9.33335 40.9382C6.114 44.889 4.48427 50.3396 4.86123 55.8929C5.22375 61.6065 7.23043 67.6218 10.8027 73.7364C11.1588 74.5032 11.9416 75.0181 12.8462 75.0807C12.9088 75.0839 12.9698 75.0871 13.0307 75.0871C13.8648 75.0871 14.6284 74.6941 15.0326 74.0621C15.987 72.8318 15.2636 71.4571 14.7358 70.4561C14.6524 70.2957 14.5706 70.1418 14.4872 69.9749C10.5316 62.6749 9.12643 56.0709 10.3134 50.346C11.2791 45.5419 14.9812 41.1917 19.9795 38.9925C26.3508 36.1212 34.0551 35.3481 44.2457 36.5623C44.9098 36.6121 45.5947 36.7388 46.2588 36.8607C47.4346 37.0756 48.6505 37.3018 49.9802 37.1238C51.2346 36.7292 51.6934 35.5245 51.5907 34.5059V34.5059ZM134.662 49.544C133.523 43.9346 129.716 38.7872 124.481 35.778C119.048 32.634 112.37 31.0861 104.523 31.1486L103.556 31.5384L103.378 31.6315C102.555 32.2218 102.236 33.282 102.565 34.3311C102.889 35.3641 103.744 36.0394 104.709 36.0522C105.383 36.1068 106.053 36.1533 106.725 36.1982C109.019 36.3538 111.393 36.5158 113.674 37.05C118.033 37.9483 123.95 40.0768 127.392 45.1344C130.992 50.237 130.252 56.565 129.494 59.8806C128.015 66.2487 124.617 72.7451 119.09 79.7549C118.859 80.0677 118.604 80.3676 118.347 80.6692C117.68 81.452 116.993 82.2604 116.68 83.3961C116.557 84.4949 117.214 85.5167 118.323 85.9401C118.647 86.0637 118.974 86.1246 119.288 86.1246C120.031 86.1246 120.706 85.791 121.133 85.1878C125.411 80.2233 128.852 75.0197 131.357 69.7247C134.806 62.3476 135.919 55.5576 134.662 49.5456"
           className="fill-current"
@@ -230,9 +235,9 @@ const Logo = () => {
           className="fill-current"
         />
       </svg>
-      <div className="text-pink-500 ml-8">
-        <p className="text-3xl">Cin Cin Natale 2021</p>
-        <p className="text-xl italic font-thin">Farmaceutica Younger</p>
+      <div className="text-pink-500 text-center sm:text-left ml-5">
+        <p className="text-xl">{event.name}</p>
+        <p className="italic font-thin">Farmaceutica Younger</p>
       </div>
     </div>
   )

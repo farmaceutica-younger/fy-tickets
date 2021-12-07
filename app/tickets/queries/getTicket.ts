@@ -3,8 +3,7 @@ import db from "db"
 import { z } from "zod"
 
 const GetTicket = z.object({
-  // This accepts type of undefined, but is required at runtime
-  id: z.number().optional().refine(Boolean, "Required"),
+  id: z.string().optional().refine(Boolean, "Required"),
 })
 
 export default resolver.pipe(resolver.zod(GetTicket), resolver.authorize(), async ({ id }) => {

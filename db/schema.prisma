@@ -65,13 +65,28 @@ model Token {
 // }
 
 model Ticket {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(cuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   email       String   @unique
   name        String
   role        String
   avatar      String
-  ticketNum   String
+  ticketNum   Int
   ticketImage String?
+
+  event   Event  @relation(fields: [eventId], references: [id])
+  eventId String
+
+  @@unique([eventId, ticketNum])
+}
+
+model Event {
+  id            String   @id @default(cuid())
+  name          String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  eventDate     DateTime
+  eventLocation String
+  Ticket        Ticket[]
 }

@@ -1,37 +1,46 @@
-import { Ticket } from "app/tickets/components/ticket"
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next"
 import { linkedin as linkedinConf } from "app/api/linkedin"
-import db from "db"
+import { renderTicketImage } from "app/tickets/helpers/render"
+import db, { Event, Ticket } from "db"
+import { GetServerSidePropsContext } from "next"
+import { NotFoundError } from "next/stdlib"
 
-export default function Login({ ticket }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Login() {
   return (
     <div>
       <h3>logged</h3>
-      <pre>{JSON.stringify(ticket, null, 2)}</pre>
-      <Ticket
-        ticketNum={ticket.id}
-        user={{
-          name: ticket.name,
-          src: ticket.avatar,
-          role: ticket.role,
-        }}
-      />
     </div>
   )
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const code = ctx.query.code as string
+  const eventId = ctx.query.state as string
+  const event = await db.event.findUnique({ where: { id: eventId } })
+  if (!event) {
+    throw new NotFoundError("Event not found")
+  }
+  const ticket = await getOrCreateTicket(code, event)
+  return {
+    redirect: {
+      destination: `/events/${eventId}/tickets/${ticket.id}`,
+      permanent: false,
+    },
+  }
+}
+
+async function getOrCreateTicket(code: string, event: Event) {
   const accessToken = await getAccessToken(code)
   const profile = await getUserProfile(accessToken)
   const email = await getUserEmail(accessToken)
+  const total = await db.ticket.count({ where: { eventId: event.id } })
   const ticket = await db.ticket.upsert({
     create: {
       avatar: profile.profileImageURL,
       email: email,
       name: `${profile.firstName} ${profile.lastName}`,
       role: "",
-      ticketNum: "000000000",
+      ticketNum: total + 1,
+      eventId: event.id,
     },
     update: {
       avatar: profile.profileImageURL,
@@ -41,12 +50,20 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
       email: email,
     },
   })
-  return {
-    redirect: {
-      destination: "./" + ticket.id,
-      permanent: false,
-    },
+  if (!ticket.ticketImage) {
+    await createImage(ticket, event)
   }
+  return ticket
+}
+
+async function createImage(ticket: Ticket, event: Event) {
+  const res = await renderTicketImage(ticket, event)
+  await db.ticket.update({
+    where: { id: ticket.id },
+    data: {
+      ticketImage: res,
+    },
+  })
 }
 
 async function getAccessToken(code: string) {
@@ -65,7 +82,7 @@ async function getAccessToken(code: string) {
       "Content-Type": "application/x-www-form-urlencoded",
     },
   }).then((r) => r.json())
-  return res.access_token
+  return res.access_token as string
 }
 
 async function getUserProfile(accessToken: string) {
@@ -78,7 +95,6 @@ async function getUserProfile(accessToken: string) {
       Authorization: `Bearer ${accessToken}`,
     },
   }).then((r) => r.json())
-  console.log(res)
   const id = res.id as string
   const firstName = res.localizedFirstName as string
   const lastName = res.localizedLastName as string

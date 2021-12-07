@@ -39,15 +39,27 @@ CREATE TABLE "Token" (
 
 -- CreateTable
 CREATE TABLE "Ticket" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" TEXT NOT NULL PRIMARY KEY,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "role" TEXT NOT NULL,
     "avatar" TEXT NOT NULL,
-    "ticketNum" TEXT NOT NULL,
-    "ticketImage" TEXT
+    "ticketNum" INTEGER NOT NULL,
+    "ticketImage" TEXT,
+    "eventId" TEXT NOT NULL,
+    CONSTRAINT "Ticket_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "Event" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Event" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    "eventDate" DATETIME NOT NULL,
+    "eventLocation" TEXT NOT NULL
 );
 
 -- CreateIndex
@@ -61,3 +73,6 @@ CREATE UNIQUE INDEX "Token_hashedToken_type_key" ON "Token"("hashedToken", "type
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Ticket_email_key" ON "Ticket"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Ticket_eventId_ticketNum_key" ON "Ticket"("eventId", "ticketNum");

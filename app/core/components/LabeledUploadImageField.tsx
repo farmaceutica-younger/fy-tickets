@@ -138,7 +138,6 @@ export const LabeledUploadImageField = forwardRef<HTMLInputElement, LabeledUploa
 export default LabeledUploadImageField
 
 function generateBlob(canvas: HTMLCanvasElement, crop: Crop): Promise<Blob | undefined | null> {
-  console.log("calling blob", canvas, crop)
   if (!crop || !canvas) {
     return Promise.resolve(undefined)
   }
