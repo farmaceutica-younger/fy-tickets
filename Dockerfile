@@ -9,8 +9,7 @@ COPY . .
 ENV NODE_ENV production
 RUN npx blitz prisma generate
 RUN npm run build
-RUN npm purge --production
-
+RUN npm prune --production
 
 FROM node:slim
 WORKDIR /app
