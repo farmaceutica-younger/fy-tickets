@@ -10,7 +10,7 @@ ENV NODE_ENV production
 RUN npx blitz prisma generate
 RUN npm run build
 
-FROM node:slim
+FROM node:16-alpine3.12
 WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
