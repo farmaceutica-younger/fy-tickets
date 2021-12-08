@@ -29,6 +29,16 @@ export const renderTicketImage = async (ticket: TicketModel, event: EventModel) 
 	  `,
     encoding: "base64",
     transparent: true,
+    puppeteerArgs: {
+      headless: true,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--headless",
+        "--disable-gpu",
+        "--disable-dev-shm-usage",
+      ],
+    },
   })) as string
   const dataUri = `data:image/png;base64,${image}`
   const res = await cloudinary.uploader.upload(dataUri, {
