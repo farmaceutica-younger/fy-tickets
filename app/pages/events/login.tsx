@@ -33,18 +33,23 @@ async function getOrCreateTicket(code: string, event: Event) {
   const profile = await getUserProfile(accessToken)
   const email = await getUserEmail(accessToken)
   const total = await db.ticket.count({ where: { eventId: event.id } })
+  const name = `${profile.firstName} ${profile.lastName}`.replace(
+    /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+    ""
+  )
+
   const ticket = await db.ticket.upsert({
     create: {
       avatar: profile.profileImageURL,
       email: email,
-      name: `${profile.firstName} ${profile.lastName}`,
+      name: name,
       role: "",
       ticketNum: total + 1,
       eventId: event.id,
     },
     update: {
       avatar: profile.profileImageURL,
-      name: `${profile.firstName} ${profile.lastName}`,
+      name: name,
     },
     where: {
       email: email,

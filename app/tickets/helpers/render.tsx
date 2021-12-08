@@ -44,6 +44,5 @@ export const renderTicketImage = async (ticket: TicketModel, event: EventModel) 
   const res = await cloudinary.uploader.upload(dataUri, {
     public_id: `events/${event.id}/tickets/${ticket.id}`,
   })
-  console.log(res)
   return res.url
 }
