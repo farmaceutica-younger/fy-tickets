@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: fy-site
+  name: fy-site
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fy-site
+  template:
+    metadata:
+      labels:
+        app: fy-site
+    spec:
+      containers:
+        - image: ghcr.io/farmaceutica-younger/fy-tickets/app:sha-8c1ab00
+          name: app
+          env:
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: fy-db-mysql
+                  key: mysql-root-password
+            - name: DATABASE_URL
+              value: mysql://root:$(MYSQL_PASSWORD)@fy-db-mysql:3306/fy-site
+          envFrom:
+            - secretRef:
+                name: linkedin
+            - secretRef:
+                name: cloundinary
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 400m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: fy-site
+  name: fy-site
+spec:
+  ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: 3000
+  selector:
+    app: fy-site

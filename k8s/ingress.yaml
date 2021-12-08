@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+  name: fy-site
+spec:
+  rules:
+    - host: site.k8s.farmaceuticayounger.science
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: fy-site
+                port:
+                  number: 3000
+  tls:
+    - hosts:
+        - site.k8s.farmaceuticayounger.science
+      secretName: site.k8s.farmaceuticayounger.science-tls

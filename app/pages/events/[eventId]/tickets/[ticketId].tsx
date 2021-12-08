@@ -21,6 +21,15 @@ export const ShowTicketPage = ({
     <>
       <Head>
         <title>Ticket {ticket.name}</title>
+        <meta property="og:title" content={`Ticket di ${ticket.name}`} />
+        <meta
+          property="og:image"
+          content={`https://res.cloudinary.com/dbdvy5b2z/image/upload/w_1200,c_lpad/events/${event.id}/tickets/${ticket.id}.png`}
+        />
+        <meta
+          property="og:description"
+          content={`${ticket.name} parteciperà all'evento ${event.name} di Farmaceutica Younger`}
+        />
       </Head>
 
       <div className="h-screen bg-gray-800 grid md:grid-rows-2 lg:grid-rows-1 lg:grid-cols-2">
