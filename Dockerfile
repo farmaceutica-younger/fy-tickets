@@ -9,14 +9,13 @@ RUN apk add --no-cache \
       nodejs \
       yarn
 RUN apk add --no-cache libc6-compat
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 FROM base as builder
 WORKDIR /app
 
 COPY package*.json /app
-
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 RUN npm ci 
 COPY . .
@@ -34,6 +33,7 @@ RUN addgroup -S pptruser && adduser -S -g pptruser pptruser \
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./
 
 ENV PORT 3000
